@@ -1,0 +1,5 @@
+/.shake
+/dist
+/elm-stuff
+.packages
+.static
