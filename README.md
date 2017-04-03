@@ -4,6 +4,7 @@ Simple implementation of DOF calculator in Elm, mainly to try out the language.
 
 It takes 3 inputs (distance, focal length and aperture) and calculates 3 output values (near point, far point, range)
 
-##TODO:
+
+### TODO:
 - css
 - sensor/coc input
