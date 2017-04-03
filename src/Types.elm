@@ -5,6 +5,7 @@ type Msg
     = SetDistance String
     | SetFocalLength String
     | SetAperture String
+    | UpdateDOF
 
 type alias Model =
     { input: InputParameters
@@ -12,9 +13,9 @@ type alias Model =
     }
 
 type alias DOF = 
-    { near: Float
-    , far: Float
-    , diff: Float
+    { near: Maybe Float
+    , far: Maybe Float
+    , diff: Maybe Float
     }
 
 type alias InputParameters =

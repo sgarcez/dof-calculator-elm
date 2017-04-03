@@ -4,7 +4,7 @@ import Types exposing (..)
 
 
 defaultInput : InputParameters
-defaultInput = 
+defaultInput =
     { distance = "10000"
     , aperture = "1.4"
     , focalLength = "50"
@@ -29,43 +29,57 @@ update msg model =
                 oldInput = model.input
                 newInput = { oldInput | distance = value }
             in
-                (updateModel model newInput, Cmd.none)
+                update UpdateDOF {model|input = newInput}
 
         SetFocalLength value ->
             let
                 oldInput = model.input
                 newInput = { oldInput | focalLength = value }
             in
-                (updateModel model newInput, Cmd.none)
+                update UpdateDOF {model|input = newInput}
 
         SetAperture value ->
             let
                 oldInput = model.input
                 newInput = { oldInput | aperture = value }
             in
-                (updateModel model newInput, Cmd.none)
+                update UpdateDOF { model | input = newInput }
 
-
-updateModel : Model -> InputParameters -> Model
-updateModel model newInput =
-    { model | input = newInput
-    , dof = calcDOF(newInput)
-    }
+        UpdateDOF ->
+            ({ model | dof = calcDOF model.input }, Cmd.none)
 
 
 calcDOF : InputParameters -> DOF
 calcDOF input =
     let
         coc = 0.03
-        focalLength = Result.withDefault 0 (String.toFloat input.focalLength)
-        aperture = Result.withDefault 0 (String.toFloat input.aperture)
-        distance = Result.withDefault 0 (String.toFloat input.distance)
-        hyperFocal = (focalLength * focalLength) / (aperture * coc)
-        nearpoint = (hyperFocal * distance) / (hyperFocal + distance - focalLength)
-        farpoint = (hyperFocal * distance) / (hyperFocal - (distance - focalLength))
     in
-        -- convert to cm
-        { near = nearpoint / 10
-        , far = farpoint/ 10
-        , diff = (farpoint - nearpoint) / 10
-        }
+        case
+            ( String.toFloat input.focalLength
+            , String.toFloat input.aperture
+            , String.toFloat input.distance
+            ) of
+            (Ok focalLength, Ok aperture, Ok distance) ->
+                let
+                    hyperfocal = (focalLength * focalLength) / (aperture * coc)
+                    nearpoint =
+                        (
+                            (hyperfocal * distance) /
+                            (hyperfocal + distance - focalLength)
+                        )
+                    farpoint =
+                        (
+                            (hyperfocal * distance) /
+                            (hyperfocal - (distance - focalLength))
+                        )
+                in
+                    -- convert to cm
+                    { near = Just (nearpoint / 10)
+                    , far = Just (farpoint/ 10)
+                    , diff = Just ((farpoint - nearpoint) / 10)
+                    }
+            _ ->
+                { near = Nothing
+                , far = Nothing
+                , diff = Nothing
+                }
