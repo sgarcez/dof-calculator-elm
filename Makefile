@@ -1,6 +1,6 @@
-all: dist/app.js \
-	 .static \
-	 .packages
+all: .packages \
+	dist/app.js \
+	.static
 
 .static: $(shell find static/ -type f)
 	rsync -r static/ dist/
