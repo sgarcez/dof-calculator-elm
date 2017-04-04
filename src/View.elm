@@ -8,22 +8,40 @@ import Types exposing (..)
 
 root : Model -> Html Msg
 root model =
-    div []
-        [ textInput model.input.distance SetDistance
-        , textInput model.input.focalLength SetFocalLength
-        , textInput model.input.aperture SetAperture
-        , p [] [text (toString model.dof.near)]
-        , p [] [text (toString model.dof.far)]
-        , p [] [text (toString model.dof.diff)]
+    div [ class "container" ]
+        [ div [ class "form-wrap" ]
+            [ textInput "Distance" model.input.distance SetDistance
+            , textInput "Focal Length" model.input.focalLength SetFocalLength
+            , textInput "Aperture" model.input.aperture SetAperture
+            , output model.dof
+            ]
         ]
 
-textInput : InputParameter -> (String -> Msg) -> Html Msg
-textInput param msg =
+textInput : String -> InputParameter -> (String -> Msg) -> Html Msg
+textInput title param msg =
     let
-        class_name = if param.valid then  "valid" else "invalid"
+        class_name = "form-control " ++ if param.valid then "valid" else "invalid"
     in
-        input [ type_ "text"
-                , value param.input
-                , onInput msg
-                , class class_name
-                ] []
+        div [ class "form-group" ]
+            [ label [] [ text title ] 
+            , input [ type_ "text"
+                    , value param.input
+                    , onInput msg
+                    , class class_name
+                    ] []
+            ]
+
+output : DOF -> Html Msg
+output dof =
+    div []
+        [ p [] [ text ("Near Point: " ++ (outputLine dof.near)) ]
+        , p [] [ text ("Far Point: " ++ (outputLine dof.far)) ]
+        , p [] [ text ("Difference: " ++ (outputLine dof.diff)) ]
+        ]
+
+outputLine : Maybe Float -> String
+outputLine value =
+    case value of
+        Just num -> toString num ++ " cm"
+        Nothing -> "" 
+

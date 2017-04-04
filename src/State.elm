@@ -5,9 +5,18 @@ import Types exposing (..)
 
 defaultInput : InputParameters
 defaultInput =
-    { distance = { input = "1000", parsed = 1000.0, valid = True }
-    , aperture = { input = "1.4", parsed = 1.4, valid = True }
-    , focalLength = { input = "50", parsed = 50.0, valid = True }
+    { distance = { input = "1000"
+                 , parsed = 1000.0
+                 , valid = True
+                 }
+    , aperture = { input = "1.4"
+                 , parsed = 1.4
+                 , valid = True
+                 }
+    , focalLength = { input = "50"
+                    , parsed = 50.0
+                    , valid = True
+                    }
     }
 
 
@@ -56,7 +65,11 @@ parseInput : String -> InputParameter
 parseInput val =
     case String.toFloat val of
         Ok v ->
-            { input = val, parsed = v, valid = True }
+            case v > 0 of
+                True ->
+                    { input = val, parsed = v, valid = True }
+                False ->
+                    { input = val, parsed = v, valid = False }
         Err _ ->
             { input = val, parsed = -1, valid = False }
 
