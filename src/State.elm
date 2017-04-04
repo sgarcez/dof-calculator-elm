@@ -5,9 +5,9 @@ import Types exposing (..)
 
 defaultInput : InputParameters
 defaultInput =
-    { distance = "10000"
-    , aperture = "1.4"
-    , focalLength = "50"
+    { distance = { input = "1000", parsed = 1000.0, valid = True }
+    , aperture = { input = "1.4", parsed = 1.4, valid = True }
+    , focalLength = { input = "50", parsed = 50.0, valid = True }
     }
 
 
@@ -26,38 +26,53 @@ update msg model =
     case msg of
         SetDistance value ->
             let
-                oldInput = model.input
-                newInput = { oldInput | distance = value }
+                oldInput  = model.input
             in
-                update UpdateDOF {model | input = newInput}
+                update UpdateDOF {
+                    model | input = { oldInput | distance = parseInput value }
+                }
 
         SetFocalLength value ->
             let
                 oldInput = model.input
-                newInput = { oldInput | focalLength = value }
             in
-                update UpdateDOF {model | input = newInput}
+                update UpdateDOF {
+                    model | input = { oldInput | focalLength = parseInput value }
+                }
 
         SetAperture value ->
             let
                 oldInput = model.input
-                newInput = { oldInput | aperture = value }
             in
-                update UpdateDOF { model | input = newInput }
+                update UpdateDOF {
+                    model | input = { oldInput | aperture = parseInput value }
+                }
 
         UpdateDOF ->
             ({ model | dof = calcDOF model.input }, Cmd.none)
 
 
+parseInput : String -> InputParameter
+parseInput val =
+    case String.toFloat val of
+        Ok v ->
+            { input = val, parsed = v, valid = True }
+        Err _ ->
+            { input = val, parsed = -1, valid = False }
+
+
 calcDOF : InputParameters -> DOF
 calcDOF input =
     case
-        ( String.toFloat input.focalLength
-        , String.toFloat input.aperture
-        , String.toFloat input.distance
+        ( input.focalLength.valid
+        , input.aperture.valid
+        , input.distance.valid
         ) of
-        (Ok focalLength, Ok aperture, Ok distance) ->
+        (True, True, True) ->
             let
+                focalLength = input.focalLength.parsed
+                aperture = input.aperture.parsed
+                distance = input.distance.parsed
                 coc = 0.03
                 hyperfocal = (focalLength * focalLength) / (aperture * coc)
                 nearpoint =

@@ -9,19 +9,21 @@ import Types exposing (..)
 root : Model -> Html Msg
 root model =
     div []
-        [ input [ type_ "text"
-                , value model.input.distance
-                , onInput SetDistance
-                ] []
-        , input [ type_ "text"
-                , value model.input.focalLength
-                , onInput SetFocalLength
-                ] []
-        , input [ type_ "text"
-                , value model.input.aperture
-                , onInput SetAperture
-                ] []
+        [ textInput model.input.distance SetDistance
+        , textInput model.input.focalLength SetFocalLength
+        , textInput model.input.aperture SetAperture
         , p [] [text (toString model.dof.near)]
         , p [] [text (toString model.dof.far)]
         , p [] [text (toString model.dof.diff)]
         ]
+
+textInput : InputParameter -> (String -> Msg) -> Html Msg
+textInput param msg =
+    let
+        class_name = if param.valid then  "valid" else "invalid"
+    in
+        input [ type_ "text"
+                , value param.input
+                , onInput msg
+                , class class_name
+                ] []

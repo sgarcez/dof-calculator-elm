@@ -12,14 +12,20 @@ type alias Model =
     , dof: DOF
     }
 
-type alias DOF = 
+type alias DOF =
     { near: Maybe Float
     , far: Maybe Float
     , diff: Maybe Float
     }
 
+type alias InputParameter =
+    { input: String
+    , parsed: Float
+    , valid: Bool
+    }
+
 type alias InputParameters =
-    { distance : String
-    , focalLength: String 
-    , aperture: String
+    { distance : InputParameter
+    , focalLength: InputParameter
+    , aperture: InputParameter
     }
