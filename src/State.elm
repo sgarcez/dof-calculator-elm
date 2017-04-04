@@ -29,14 +29,14 @@ update msg model =
                 oldInput = model.input
                 newInput = { oldInput | distance = value }
             in
-                update UpdateDOF {model|input = newInput}
+                update UpdateDOF {model | input = newInput}
 
         SetFocalLength value ->
             let
                 oldInput = model.input
                 newInput = { oldInput | focalLength = value }
             in
-                update UpdateDOF {model|input = newInput}
+                update UpdateDOF {model | input = newInput}
 
         SetAperture value ->
             let
@@ -51,35 +51,33 @@ update msg model =
 
 calcDOF : InputParameters -> DOF
 calcDOF input =
-    let
-        coc = 0.03
-    in
-        case
-            ( String.toFloat input.focalLength
-            , String.toFloat input.aperture
-            , String.toFloat input.distance
-            ) of
-            (Ok focalLength, Ok aperture, Ok distance) ->
-                let
-                    hyperfocal = (focalLength * focalLength) / (aperture * coc)
-                    nearpoint =
-                        (
-                            (hyperfocal * distance) /
-                            (hyperfocal + distance - focalLength)
-                        )
-                    farpoint =
-                        (
-                            (hyperfocal * distance) /
-                            (hyperfocal - (distance - focalLength))
-                        )
-                in
-                    -- convert to cm
-                    { near = Just (nearpoint / 10)
-                    , far = Just (farpoint/ 10)
-                    , diff = Just ((farpoint - nearpoint) / 10)
-                    }
-            _ ->
-                { near = Nothing
-                , far = Nothing
-                , diff = Nothing
+    case
+        ( String.toFloat input.focalLength
+        , String.toFloat input.aperture
+        , String.toFloat input.distance
+        ) of
+        (Ok focalLength, Ok aperture, Ok distance) ->
+            let
+                coc = 0.03
+                hyperfocal = (focalLength * focalLength) / (aperture * coc)
+                nearpoint =
+                    (
+                        (hyperfocal * distance) /
+                        (hyperfocal + distance - focalLength)
+                    )
+                farpoint =
+                    (
+                        (hyperfocal * distance) /
+                        (hyperfocal - (distance - focalLength))
+                    )
+            in
+                -- convert to cm
+                { near = Just (nearpoint / 10)
+                , far = Just (farpoint/ 10)
+                , diff = Just ((farpoint - nearpoint) / 10)
                 }
+        _ ->
+            { near = Nothing
+            , far = Nothing
+            , diff = Nothing
+            }
