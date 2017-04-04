@@ -1,0 +1,21 @@
+body {
+    padding: 15px;
+}
+
+.form-wrap {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-control {
+    margin-bottom: 3px;
+}
+
+input.form-control.valid {
+    color: green;
+}
+
+input.form-control.invalid {
+    color: red;
+}
