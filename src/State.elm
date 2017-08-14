@@ -5,8 +5,8 @@ import Types exposing (..)
 
 defaultInput : InputParameters
 defaultInput =
-    { distance = { input = "1000"
-                 , parsed = 1000.0
+    { distance = { input = "100"
+                 , parsed = 100.0
                  , valid = True
                  }
     , aperture = { input = "1.4"
@@ -85,7 +85,8 @@ calcDOF input =
             let
                 focalLength = input.focalLength.parsed
                 aperture = input.aperture.parsed
-                distance = input.distance.parsed
+                distance = input.distance.parsed * 10
+                -- for 35mm sensors
                 coc = 0.03
                 hyperfocal = (focalLength * focalLength) / (aperture * coc)
                 nearpoint =

@@ -6,6 +6,7 @@ It takes 3 inputs (distance, focal length and aperture) and calculates 3 output 
 
 You can try it here: [https://sgarcez.github.io/dof-calculator-elm/](https://sgarcez.github.io/dof-calculator-elm/)
 
+Compile with: `elm-make src/App.elm --output static/app.js`
+
 ### TODO:
-- Float toString precision
 - sensor/coc input

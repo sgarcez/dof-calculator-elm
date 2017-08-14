@@ -4,14 +4,15 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Types exposing (..)
+import Round exposing (round)
 
 
 root : Model -> Html Msg
 root model =
     div [ class "container" ]
         [ div [ class "form-wrap" ]
-            [ textInput "Distance" model.input.distance SetDistance
-            , textInput "Focal Length" model.input.focalLength SetFocalLength
+            [ textInput "Distance(cm)" model.input.distance SetDistance
+            , textInput "Focal Length(mm)" model.input.focalLength SetFocalLength
             , textInput "Aperture" model.input.aperture SetAperture
             , output model.dof
             ]
@@ -42,6 +43,6 @@ output dof =
 outputLine : Maybe Float -> String
 outputLine value =
     case value of
-        Just num -> toString num ++ " cm"
+        Just num -> Round.round 2 num ++ " cm"
         Nothing -> "" 
 
